@@ -69,10 +69,10 @@ Homerun borrows this metaphor for HTTP mocking in integration tests:
 
 ```gradle
 // app module (main scope)
-implementation 'com.homerun:homerun-batter:0.1.0'
+implementation 'com.shiftlab.homerun:homerun-batter:0.1.0'
 
 // test module (test scope only)
-testImplementation 'com.homerun:homerun-pitcher:0.1.0'
+testImplementation 'com.shiftlab.homerun:homerun-pitcher:0.1.0'
 ```
 
 ### 2 — Configure batter in the app
