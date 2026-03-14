@@ -1,0 +1,12 @@
+dependencies {
+    api project(':homerun-common')
+    api project(':homerun-pitcher')
+
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    api             'org.springframework.boot:spring-boot-starter-security'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+}

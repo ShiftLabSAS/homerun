@@ -1,0 +1,24 @@
+spring:
+  data:
+    mongodb:
+      # Pitcher's Spring Data repo connects to the docker-compose MongoDB.
+      host: localhost
+      port: 27017
+      username: admin
+      password: secret
+      database: homerun
+      authentication-database: admin
+
+homerun:
+  pitcher:
+    enabled: true
+    base-url: http://localhost:8080 # running docker-compose sample-app
+    auth-token: dev-secret # must match BATTER_AUTH_TOKEN in docker-compose
+  batter:
+    auth-token: dev-secret
+
+# Batter builder connection — same docker-compose MongoDB
+mongo:
+  user: admin
+  password: secret
+  host: localhost:27017/?authSource=admin

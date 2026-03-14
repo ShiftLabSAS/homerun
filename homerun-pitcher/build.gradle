@@ -1,0 +1,17 @@
+dependencies {
+    api project(':homerun-common')
+
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    implementation 'org.springframework.data:spring-data-mongodb'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+    // Optional: makes the pitcher usable in non-Spring (plain test) contexts
+    compileOnly 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+    // TestRestTemplate — available on classpath when pitcher is used in @SpringBootTest
+    compileOnly 'org.springframework.boot:spring-boot-test'
+    // RestTemplate, HttpEntity, ResponseEntity — pulled in transitively by consumers
+    compileOnly 'org.springframework:spring-web'
+
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+}

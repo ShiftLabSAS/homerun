@@ -1,0 +1,19 @@
+server:
+  port: 8080
+
+# Downstream public API used for real (non-mocked) calls
+jsonplaceholder:
+  base-url: https://jsonplaceholder.typicode.com
+
+# MongoDB connection
+mongo:
+  user: admin
+  password: secret
+  host: localhost:27017
+
+# Batter auth token — callers must supply this as X-Mock-Auth-Token
+# homerun.batter.enabled is NOT set here; batter activates because the
+# HomeRunBatter bean is declared programmatically in AppConfig.
+homerun:
+  batter:
+    auth-token: dev-secret

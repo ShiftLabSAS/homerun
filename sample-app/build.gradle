@@ -1,0 +1,11 @@
+plugins {
+    id 'org.springframework.boot' version '3.3.4'
+}
+
+dependencies {
+    implementation project(':homerun-batter')   // pulls homerun-pitcher transitively
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // No embedded MongoDB — tests run against the docker-compose instance
+}

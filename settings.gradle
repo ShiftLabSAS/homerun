@@ -1,0 +1,6 @@
+rootProject.name = 'homerun'
+
+include 'homerun-common'
+include 'homerun-pitcher'
+include 'homerun-batter'
+include 'sample-app'

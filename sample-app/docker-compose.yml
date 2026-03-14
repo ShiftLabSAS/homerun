@@ -1,0 +1,37 @@
+services:
+
+  mongo:
+    image: mongo:7
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: [ "CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  sample-app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      # MongoDB credentials — match the mongo service above
+      MONGO_USER: admin
+      MONGO_PASS: secret
+      # host:port format consumed by HomeRunBatter.builder().host(...)
+      # authSource=admin required for root-level credentials in MongoDB 7
+      MONGO_HOST: "mongo:27017/?authSource=admin"
+      # Shared secret that callers must include as X-Mock-Auth-Token header
+      BATTER_AUTH_TOKEN: dev-secret
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+volumes:
+  mongo_data:
