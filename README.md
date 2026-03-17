@@ -1,4 +1,6 @@
-# Homerun — HTTP Mock Framework for Integration Tests
+<img src=".resources/logo.png" alt="Homerun Logo" width="200" height="200" />
+
+# Homerun — Java Library for HTTP Service Mocking in Integration Tests
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -13,31 +15,50 @@ Homerun borrows this metaphor for HTTP mocking in integration tests:
 | **Pitcher** | Throws the ball | Test code that _throws_ expectations into the shared store |
 | **Batter** | Receives and hits the ball | App-side filter that _intercepts_ outgoing HTTP calls and serves the stored response |
 
+
+<img src=".resources/homerun-architecture.png" alt="Homerun architecture diagram" width="300" />
+
+<details>
+<summary>show dotsource</summary>
+
+```dot
+digraph HomerunFlow {
+  rankdir=TB;
+  node [shape=box, style=rounded, fontname="Arial"];
+
+  subgraph cluster_test {
+    label = "Test process";
+    PitcherClient [label="PitcherClient\nopen()"];
+    Expect [label="expect('svc', 'op', req, resp)\n→ MongoDB"];
+    Get [label="get('/endpoint', Response.class)\n(injects X-Mock-Scenario header)"];
+    PitcherClient -> Expect;
+    PitcherClient -> Get;
+    Get -> HTTP;
+  }
+
+  HTTP [label="HTTP", shape=ellipse, style=filled, fillcolor=lightgray];
+
+  subgraph cluster_app {
+    label = "App under test (Spring Boot + homerun-batter)";
+    MockHeaderFilter [label="MockHeaderFilter\nreads X-Mock-Scenario header"];
+    RequestMockContext [label="activates RequestMockContext"];
+    MockClientSupport [label="MockClientSupport\noutgoing call intercepted?"];
+    MongoDB [label="MongoDB\n(fetch expectation)"];
+    Resp [label="resp (mocked response)"];
+    RealService [label="call real downstream service"];
+
+    MockHeaderFilter -> RequestMockContext;
+    RequestMockContext -> MockClientSupport;
+    MockClientSupport -> MongoDB [label="YES"];
+    MongoDB -> Resp;
+    MockClientSupport -> RealService [label="NO"];
+  }
+
+  HTTP -> MockHeaderFilter;
+}
+
 ```
-┌──────────────────────────────────────────────────────────┐
-│  Test process                                            │
-│                                                          │
-│  PitcherClient ──── open() ─────────────────────────┐   │
-│       │                                             │   │
-│       ├── expect("svc", "op", req, resp) ──► MongoDB│   │
-│       │                                             │   │
-│       └── get("/endpoint", Response.class)          │   │
-│             │  (injects X-Mock-Scenario header)     │   │
-└─────────────┼───────────────────────────────────────┘   │
-              │  HTTP
-              ▼
-┌──────────────────────────────────────────────────────────┐
-│  App under test  (Spring Boot + homerun-batter)          │
-│                                                          │
-│  MockHeaderFilter ── reads X-Mock-Scenario header        │
-│       │                                                  │
-│       └── activates RequestMockContext                   │
-│                                                          │
-│  MockClientSupport ── outgoing call intercepted?         │
-│       ├── YES → fetch expectation from MongoDB ──► resp  │
-│       └── NO  → call real downstream service             │
-└──────────────────────────────────────────────────────────┘
-```
+</details>
 
 ---
 
@@ -63,7 +84,21 @@ Homerun borrows this metaphor for HTTP mocking in integration tests:
 
 ---
 
+
+## Requirements
+
+Homerun requires access to a MongoDB database for storing and retrieving mock expectations. You must:
+
+- Provision a MongoDB instance accessible to both the test runner and the application under test.
+- Ensure the application and test code have appropriate read and write permissions to the MongoDB database.
+- Provide the correct MongoDB connection details in your configuration files.
+
+---
+
+
 ## Quick start
+
+> **Note:** Homerun requires a running MongoDB instance. You must provision the database and ensure both your application and test code have read/write access. Provide the correct connection details in your configuration.
 
 ### 1 — Add dependencies
 

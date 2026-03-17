@@ -1,0 +1,34 @@
+digraph HomerunFlow {
+  rankdir=TB;
+  node [shape=box, style=rounded, fontname="Arial"];
+
+  subgraph cluster_test {
+    label = "Test process";
+    PitcherClient [label="PitcherClient\nopen()"];
+    Expect [label="expect('svc', 'op', req, resp)\n→ MongoDB"];
+    Get [label="get('/endpoint', Response.class)\n(injects X-Mock-Scenario header)"];
+    PitcherClient -> Expect;
+    PitcherClient -> Get;
+    Get -> HTTP;
+  }
+
+  HTTP [label="HTTP", shape=ellipse, style=filled, fillcolor=lightgray];
+
+  subgraph cluster_app {
+    label = "App under test (Spring Boot + homerun-batter)";
+    MockHeaderFilter [label="MockHeaderFilter\nreads X-Mock-Scenario header"];
+    RequestMockContext [label="activates RequestMockContext"];
+    MockClientSupport [label="MockClientSupport\noutgoing call intercepted?"];
+    MongoDB [label="MongoDB\n(fetch expectation)"];
+    Resp [label="resp (mocked response)"];
+    RealService [label="call real downstream service"];
+
+    MockHeaderFilter -> RequestMockContext;
+    RequestMockContext -> MockClientSupport;
+    MockClientSupport -> MongoDB [label="YES"];
+    MongoDB -> Resp;
+    MockClientSupport -> RealService [label="NO"];
+  }
+
+  HTTP -> MockHeaderFilter;
+}
