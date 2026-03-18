@@ -1,3 +1,5 @@
+<img src=".resources/logo.png" alt="Homerun Logo" width="200" height="200" />
+
 # Homerun — Java Library for HTTP Service Mocking in Integration Tests
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
