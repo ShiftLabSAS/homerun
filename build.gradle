@@ -20,6 +20,7 @@ subprojects {
             languageVersion = JavaLanguageVersion.of(21)
         }
         withSourcesJar()
+        withJavadocJar()
     }
 
     dependencyManagement {
@@ -42,4 +43,90 @@ subprojects {
     }
 
     compileJava.options.compilerArgs += ['-parameters']
+
+    javadoc {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+}
+
+def publishedProjects = [
+    'homerun-common' : 'Shared models and constants for Homerun HTTP service mocking.',
+    'homerun-pitcher': 'Test-side Spring Boot client for defining Homerun mock scenarios and expectations.',
+    'homerun-batter' : 'Application-side Spring Boot auto-configuration for serving Homerun mock responses.'
+]
+
+configure(subprojects.findAll { publishedProjects.containsKey(it.name) }) {
+    apply plugin: 'maven-publish'
+    apply plugin: 'signing'
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+
+                versionMapping {
+                    usage('java-api') {
+                        fromResolutionOf('runtimeClasspath')
+                    }
+                    usage('java-runtime') {
+                        fromResolutionResult()
+                    }
+                }
+
+                pom {
+                    name = project.name
+                    description = publishedProjects[project.name]
+                    url = 'https://github.com/ShiftLabSAS/homerun'
+
+                    licenses {
+                        license {
+                            name = 'MIT License'
+                            url = 'https://opensource.org/license/mit'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = 'shiftlab'
+                            name = 'ShiftLab'
+                            organization = 'ShiftLab'
+                            organizationUrl = 'https://github.com/ShiftLabSAS'
+                        }
+                    }
+
+                    scm {
+                        connection = 'scm:git:git://github.com/ShiftLabSAS/homerun.git'
+                        developerConnection = 'scm:git:ssh://github.com:ShiftLabSAS/homerun.git'
+                        url = 'https://github.com/ShiftLabSAS/homerun'
+                    }
+                }
+            }
+        }
+
+        repositories {
+            maven {
+                name = 'release'
+                url = uri(findProperty('mavenRepositoryUrl') ?: "${rootProject.buildDir}/repo")
+                credentials {
+                    username = findProperty('mavenRepositoryUsername') ?: System.getenv('MAVEN_REPOSITORY_USERNAME')
+                    password = findProperty('mavenRepositoryPassword') ?: System.getenv('MAVEN_REPOSITORY_PASSWORD')
+                }
+            }
+        }
+    }
+
+    signing {
+        def signingKey = findProperty('signingInMemoryKey') ?: System.getenv('SIGNING_KEY')
+        def signingPassword = findProperty('signingInMemoryKeyPassword') ?: System.getenv('SIGNING_PASSWORD')
+
+        required {
+            !version.toString().endsWith('-SNAPSHOT') && gradle.taskGraph.allTasks.any { it.name == 'publish' }
+        }
+
+        if (signingKey) {
+            useInMemoryPgpKeys(signingKey, signingPassword)
+        }
+
+        sign publishing.publications.mavenJava
+    }
 }

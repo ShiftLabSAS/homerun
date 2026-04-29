@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.shiftlab.homerun.pitcher.PitcherClient;
 
-import main.java.com.shiftlab.homerun.sample.model.Post;
+import com.shiftlab.homerun.sample.model.Post;
 
 /**
  * End-to-end integration test for {@code GET /posts/{id}} against a running

@@ -161,3 +161,55 @@ void testGetOrder_withPaymentMocked_thenReturnsOrder() {
 ```
 
 See [`homerun-batter/README.md`](homerun-batter/README.md) and [`homerun-pitcher/README.md`](homerun-pitcher/README.md) for detailed integration guides.
+
+---
+
+## Publishing
+
+The Maven publications are configured for:
+
+- `com.shiftlab.homerun:homerun-common`
+- `com.shiftlab.homerun:homerun-pitcher`
+- `com.shiftlab.homerun:homerun-batter`
+
+`sample-app` is intentionally not published.
+
+### Verify locally
+
+```bash
+./gradlew publishToMavenLocal
+```
+
+### Publish to Maven Central
+
+Create a Central Portal user token, use the token username/password as the Maven credentials, then upload with Gradle's `maven-publish` plugin through Sonatype's OSSRH Staging API compatibility endpoint:
+
+```bash
+export MAVEN_REPOSITORY_USERNAME='central-portal-token-username'
+export MAVEN_REPOSITORY_PASSWORD='central-portal-token-password'
+export SIGNING_KEY='-----BEGIN PGP PRIVATE KEY BLOCK-----...'
+export SIGNING_PASSWORD='...'
+
+./gradlew publish \
+  -PmavenRepositoryUrl='https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/'
+```
+
+Because Gradle's built-in `maven-publish` plugin only uploads Maven files, you also need to send the uploaded staging repository to Central Portal from the same machine/IP:
+
+```bash
+TOKEN="$(printf '%s:%s' "$MAVEN_REPOSITORY_USERNAME" "$MAVEN_REPOSITORY_PASSWORD" | base64)"
+
+curl -X POST \
+  -H "Authorization: Bearer $TOKEN" \
+  'https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/com.shiftlab.homerun?publishing_type=user_managed'
+```
+
+Then finish the release in the Central Portal UI.
+
+Before publishing to Maven Central, make sure you have:
+
+- Create and verify the `com.shiftlab.homerun` namespace in Sonatype Central Portal.
+- Create a Central Portal user token.
+- Use a GPG/PGP key whose public key is available from a public keyserver.
+- Publish a non-`SNAPSHOT` version with signed main, sources, Javadoc, POM, and Gradle module metadata artifacts.
+- Release the deployment in Sonatype Central Portal.

@@ -9,3 +9,9 @@ dependencies {
 
     // No embedded MongoDB — tests run against the docker-compose instance
 }
+
+test {
+    if (!providers.gradleProperty('runIntegrationTests').map { it.toBoolean() }.getOrElse(false)) {
+        exclude '**/*IT.class'
+    }
+}
