@@ -3,7 +3,7 @@ plugins {
 }
 
 allprojects {
-    group   = 'com.shiftlab.homerun'
+    group   = 'ar.shiftlab.homerun'
     version = '0.1.0'
 
     repositories {

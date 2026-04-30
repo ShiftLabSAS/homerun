@@ -104,10 +104,10 @@ Homerun requires access to a MongoDB database for storing and retrieving mock ex
 
 ```gradle
 // app module (main scope)
-implementation 'com.shiftlab.homerun:homerun-batter:0.1.0'
+implementation 'ar.shiftlab.homerun:homerun-batter:0.1.0'
 
 // test module (test scope only)
-testImplementation 'com.shiftlab.homerun:homerun-pitcher:0.1.0'
+testImplementation 'ar.shiftlab.homerun:homerun-pitcher:0.1.0'
 ```
 
 ### 2 — Configure batter in the app
@@ -168,9 +168,9 @@ See [`homerun-batter/README.md`](homerun-batter/README.md) and [`homerun-pitcher
 
 The Maven publications are configured for:
 
-- `com.shiftlab.homerun:homerun-common`
-- `com.shiftlab.homerun:homerun-pitcher`
-- `com.shiftlab.homerun:homerun-batter`
+- `ar.shiftlab.homerun:homerun-common`
+- `ar.shiftlab.homerun:homerun-pitcher`
+- `ar.shiftlab.homerun:homerun-batter`
 
 `sample-app` is intentionally not published.
 
@@ -201,14 +201,14 @@ TOKEN="$(printf '%s:%s' "$MAVEN_REPOSITORY_USERNAME" "$MAVEN_REPOSITORY_PASSWORD
 
 curl -X POST \
   -H "Authorization: Bearer $TOKEN" \
-  'https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/com.shiftlab.homerun?publishing_type=user_managed'
+  'https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/ar.shiftlab.homerun?publishing_type=user_managed'
 ```
 
 Then finish the release in the Central Portal UI.
 
 Before publishing to Maven Central, make sure you have:
 
-- Create and verify the `com.shiftlab.homerun` namespace in Sonatype Central Portal.
+- Create and verify the `ar.shiftlab.homerun` namespace in Sonatype Central Portal.
 - Create a Central Portal user token.
 - Use a GPG/PGP key whose public key is available from a public keyserver.
 - Publish a non-`SNAPSHOT` version with signed main, sources, Javadoc, POM, and Gradle module metadata artifacts.

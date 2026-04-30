@@ -19,7 +19,7 @@
 
 ```gradle
 // build.gradle — test scope only, never shipped in production
-testImplementation 'com.shiftlab.homerun:homerun-pitcher:0.1.0'
+testImplementation 'ar.shiftlab.homerun:homerun-pitcher:0.1.0'
 ```
 
 ---

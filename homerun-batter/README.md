@@ -19,7 +19,7 @@
 
 ```gradle
 // build.gradle — main scope (not test-only)
-implementation 'com.shiftlab.homerun:homerun-batter:0.1.0'
+implementation 'ar.shiftlab.homerun:homerun-batter:0.1.0'
 ```
 
 ---
